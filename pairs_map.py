@@ -31,7 +31,7 @@ def generate_adjacency_matrix(input_data, coin_dict):
 
     num_symbols = len(symbols)
     
-    adjacency_matrix = np.zeros((num_symbols, num_symbols), dtype=float) 
+    adjacency_matrix = np.ones((num_symbols, num_symbols), dtype=float) * np.inf
 
     for source_symbol, connected_symbols in adjacency_map.items():
         source_index = symbols.index(source_symbol)
@@ -44,7 +44,8 @@ def generate_adjacency_matrix(input_data, coin_dict):
                     if source_symbol == ticker_split[0] and connected_symbol == ticker_split[1]:
                         adjacency_matrix[source_index, connected_index] = float(coin_dict[ticker]['Ask'])
                     if source_symbol == ticker_split[0] and connected_symbol == ticker_split[1]:
-                         adjacency_matrix[source_index, connected_index] = 1.0 / float(coin_dict[ticker]['Bid'])
+                        adjacency_matrix[source_index, connected_index] = 1.0 / float(coin_dict[ticker]['Bid'])
+
                     
 
             #adjacency_matrix[source_index, connected_index] = 1
@@ -54,17 +55,15 @@ def generate_adjacency_matrix(input_data, coin_dict):
 
 def plot_graph(symbols, adjacency_matrix):
     print(adjacency_matrix)
-    # Create a graph from the adjacency matrix
     G = nx.Graph()
     for i, coin in enumerate(symbols):
         G.add_node(coin)
         for j in range(i + 1, len(symbols)):
-            if adjacency_matrix[i, j] < 1000000000000.0:
+            if adjacency_matrix[i, j] > 0.0 and adjacency_matrix[i,j] < 10000000000000000000.0:
                 
                 G.add_edge(symbols[i], symbols[j])
 
-    # Draw the graph
-    pos = nx.spring_layout(G, seed=42)  # You can choose other layout algorithms
+    pos = nx.spring_layout(G, seed=42)  
     nx.draw(G, pos, with_labels=True, node_size=100, font_size=6, font_color='black')
     plt.title("Crypto Coin Pairs Graph")
     plt.show()
