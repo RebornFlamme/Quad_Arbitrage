@@ -1,4 +1,8 @@
-def get_pairs(exchange):
+import ccxt
+
+def get_pairs(exchange_name):
+
+    exchange = getattr(ccxt, exchange_name)()
 
     exchange_tickers = exchange.fetch_tickers()
     if len(exchange_tickers) > 0:
